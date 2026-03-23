@@ -2,14 +2,77 @@ import React, { useState } from "react"
 
 const CnStore = () => {
     const [serviceList, setServiceList] = useState([
-        { name: "Video Editing", sliderLevel: 0, checked: false, price: [500, 1000, 1500] },
-        { name: "Scripting", sliderLevel: 0, checked: false, price: [300, 600, 900] },
-        { name: "Social Media Management", sliderLevel: 0, checked: false, price: [400, 500, 600] },
-        { name: "Employee Training", sliderLevel: 0, checked: false, price: [5000, 5500, 6000] },
-        { name: "Custom Website", sliderLevel: 0, checked: false, price: [2000, 3000, 5000] },
-        { name: "Business Automation", sliderLevel: 0, checked: false, price: [1000, 1500, 2000] },
-        { name: "Digital Marketing", sliderLevel: 0, checked: false, price: [1500, 2500, 3500] }
-    ])
+    { 
+        name: [
+            "Video Editing", 
+            "For You: Video Editing Package", 
+            "Deluxe Video Editing Package"
+        ], 
+        sliderLevel: 0, 
+        checked: false, 
+        price: [500, 1000, 1500] 
+    },
+    { 
+        name: [
+            "Scripting", 
+            "For You: Scripting Package", 
+            "Deluxe Scripting Package"
+        ], 
+        sliderLevel: 0, 
+        checked: false, 
+        price: [300, 600, 900] 
+    },
+    { 
+        name: [
+            "Social Media Management", 
+            "For You: Social Media Management Package", 
+            "Deluxe Social Media Management Package"
+        ], 
+        sliderLevel: 0, 
+        checked: false, 
+        price: [400, 500, 600] 
+    },
+    { 
+        name: [
+            "Employee Training", 
+            "For You: Employee Training Package", 
+            "Deluxe Employee Training Package"
+        ], 
+        sliderLevel: 0, 
+        checked: false, 
+        price: [5000, 5500, 6000] 
+    },
+    { 
+        name: [
+            "Custom Website", 
+            "For You: Custom Website Package", 
+            "Deluxe Custom Website Package"
+        ], 
+        sliderLevel: 0, 
+        checked: false, 
+        price: [2000, 3000, 5000] 
+    },
+    { 
+        name: [
+            "Business Automation", 
+            "For You: Business Automation Package", 
+            "Deluxe Business Automation Package"
+        ], 
+        sliderLevel: 0, 
+        checked: false, 
+        price: [1000, 1500, 2000] 
+    },
+    { 
+        name: [
+            "Digital Marketing", 
+            "For You: Digital Marketing Package", 
+            "Deluxe Digital Marketing Package"
+        ], 
+        sliderLevel: 0, 
+        checked: false, 
+        price: [1500, 2500, 3500] 
+    }
+]);
 
     const handleSlider = (toChangeIndex, value) => {
         setServiceList(serviceList.map((service, index) =>
@@ -34,7 +97,7 @@ const CnStore = () => {
                 {serviceList.map((service, index) => (
                     <div key={index} className="border-b border-white p-4">
                         <div className="flex justify-between items-center">
-                            <p className="text-white font-semibold text-sm">{service.name}</p>
+                            <p className="text-white font-semibold text-sm">{service.name[service.sliderLevel]}</p>
                             <input
                                 type="checkbox"
                                 checked={service.checked}
