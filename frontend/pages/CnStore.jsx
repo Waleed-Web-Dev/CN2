@@ -1,141 +1,97 @@
-import React from "react"
+import React, { useState } from "react"
 import {
     Card,
-    CardAction,
     CardContent,
-    CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
+    CardDescription,
 } from "@/components/ui/card"
-import {Button} from "@/components/ui/button.jsx";
-import {useformStore} from "../store/formStore.js";
-import { PolarEmbedCheckout } from '@polar-sh/checkout/embed'
-import { useState, useEffect } from 'react'
-import {useNavigate} from "react-router-dom";
-
 
 const CnStore = () => {
-    const {buyProduct} = useformStore();
-    const [checkoutInstance, setCheckoutInstance] = useState(null)
-    const navigate = useNavigate();
-    // Clean up checkout instance on unmount
-    useEffect(() => {
-        return () => {
-            if (checkoutInstance) {
-                checkoutInstance.close()
+    const [serviceList, setServiceList] = useState([
+        { name: "Video Editing", sliderLevel: 0, checked: false, price: [500, 1000, 1500] },
+        { name: "Scripting", sliderLevel: 0, checked: false, price: [300, 600, 900] },
+        { name: "Social Media Management", sliderLevel: 0, checked: false, price: [400, 500, 600] },
+        { name: "Employee Training", sliderLevel: 0, checked: false, price: [5000, 5500, 6000] },
+        { name: "Custom Website", sliderLevel: 0, checked: false, price: [2000, 3000, 5000] },
+        { name: "Business Automation", sliderLevel: 0, checked: false, price: [1000, 1500, 2000] },
+        { name: "Digital Marketing", sliderLevel: 0, checked: false, price: [1500, 2500, 3500] }
+    ])
+
+    const handleSlider = (toChangeIndex, value) => {
+        setServiceList(serviceList.map((service, index) => {
+            if (index === toChangeIndex) {
+                return { ...service, sliderLevel: value }
             }
-        }
-    }, [checkoutInstance])
-    const handleBasicBuy = async () => {
-        try {
-            const checkout = await PolarEmbedCheckout.create(
-                'https://buy.polar.sh/polar_cl_Cvy3k49cntQ6odoNlmuwPXTZLCcsyDHY0E8WO0Zimds',
-                'dark'
-            )
-
-            setCheckoutInstance(checkout)
-
-            checkout.addEventListener('success', (event) => {
-                // Track successful purchase
-                analytics.track('Purchase Completed', {
-                    productId: 'd5ceab94-c575-47cf-9214-c037fa5aac85',
-                    // Add other analytics data
-                })
-
-                // Show success message or redirect
-                if (!event.detail.redirect) {
-                    navigate("/pay-success")
-                }
-            })
-
-            checkout.addEventListener('close', (event) => {
-                // Clean up our reference when checkout is closed
-                setCheckoutInstance(null)
-            })
-        } catch (error) {
-            console.error('Failed to open checkout', error)
-        }
+            return service
+        }))
     }
-    const handleExtremeBuy = async () => {
-        try {
-            const checkout = await PolarEmbedCheckout.create(
-                'https://buy.polar.sh/polar_cl_f64NJy3dphruT46UygoHM5wRBUzZg4UKybomW4IU6y8',
-                'dark'
-            )
 
-            setCheckoutInstance(checkout)
-
-            checkout.addEventListener('success', (event) => {
-                // Track successful purchase
-                analytics.track('Purchase Completed', {
-                    productId: '5d351759-1659-4026-89b2-6c2f4b76457d',
-                    // Add other analytics data
-                })
-
-                // Show success message or redirect
-                if (!event.detail.redirect) {
-                    navigate("/pay-success")
-                }
-            })
-
-            checkout.addEventListener('close', (event) => {
-                // Clean up our reference when checkout is closed
-                setCheckoutInstance(null)
-            })
-        } catch (error) {
-            console.error('Failed to open checkout', error)
-        }
+    const handleCheckbox = (toChangeIndex) => {
+        setServiceList(serviceList.map((service, index) => {
+            if (index === toChangeIndex) {
+                return { ...service, checked: !service.checked }
+            }
+            return service
+        }))
     }
+
+    const total = serviceList.reduce((total, service) => {
+        if (service.checked) return total + service.price[service.sliderLevel]
+        return total
+    }, 0)
+
     return (
-        <>
-            <div className="bg-black flex justify-center items-center w-full h-screen gap-5">
-                <Card className="bg-white w-3/12 text-center">
-                    <CardHeader className="border-gray-300">
-                    <CardTitle className="text-xl font-semibold text-black font-sans font-bold">Silver </CardTitle>
-                    <CardDescription className="text-sm font-semibold text-gray-500 font-sans font-bold"> €3300/month </CardDescription>
-                    </CardHeader>
-                    <CardContent className="border-t border-gray-300">
-                        <p className="text-xl font-bold">Personalized Content </p>
-                        <p className="text-sm font-bold">Editing</p>
-                        <p className="text-sm font-bold">Scripts </p>
+        <div className="bg-black min-h-screen flex flex-col items-center justify-center p-6">
+            <div className="w-full max-w-md border border-white rounded-xl overflow-hidden">
+                {serviceList.map((service, index) => (
+                    <Card key={index} className="bg-[#1a1a1a] border-0 border-b border-white rounded-none">
+                        <CardHeader className="flex flex-row items-start justify-between pb-1">
+                            <div className="flex flex-col w-full">
+                                <div className="flex justify-between items-center">
+                                    <CardTitle className="text-white text-base font-semibold">
+                                        {service.name}
+                                    </CardTitle>
+                                    <input
+                                        type="checkbox"
+                                        checked={service.checked}
+                                        onChange={() => handleCheckbox(index)}
+                                        className="w-4 h-4 cursor-pointer"
+                                    />
+                                </div>
+                                <input
+                                    type="range"
+                                    min="0"
+                                    max="2"
+                                    value={service.sliderLevel}
+                                    onChange={e => handleSlider(index, Number(e.target.value))}
+                                    className="w-1/2 mt-2 accent-white"
+                                />
+                            </div>
+                        </CardHeader>
+                        <CardContent className="pt-0">
+                            <p className="text-white text-right font-bold">
+                                €{service.price[service.sliderLevel]}
+                            </p>
+                        </CardContent>
+                    </Card>
+                ))}
 
+                {/* Total Row */}
+                <div className="bg-[#1a1a1a] flex justify-between items-center px-6 py-4 border-t border-white">
+                    <p className="text-white font-bold text-base">Total:</p>
+                    <p className="text-white font-bold text-base">€{total}</p>
+                </div>
 
-                    </CardContent>
-                    <CardFooter className="border-t border-gray-300 flex justify-center items-center">
-                        <CardAction>
-                            <Button className="text-xl font-semibold text-black font-sans font-bold" variant="outline"
-                            onClick = {handleBasicBuy}
-                            >Buy Now</Button>
-                        </CardAction>
-                    </CardFooter>
-
-                </Card>
-                <Card className="bg-white w-3/12 text-center border-red-500 border-4">
-                    <CardHeader className="border-gray-300">
-                        <CardTitle className="text-xl font-semibold text-black font-sans font-bold">Gold</CardTitle>
-                        <CardDescription className="text-sm font-semibold text-gray-500 font-sans font-bold"> €6600 </CardDescription>
-                    </CardHeader>
-                    <CardContent className="border-t border-gray-300">
-                        <p className="text-xl font-bold">Silver + Lead Generation</p>
-                        <p className="text-xl font-bold">Sales Management</p>
-                        <p className="text-sm font-bold">Automated Follow Ups</p>
-                        <p className="text-sm font-bold">Paid Ads</p>
-                        <p className="text-sm font-bold">Ai Chat Bot</p>
-
-                    </CardContent>
-                    <CardFooter className="border-t border-gray-300 flex justify-center items-center">
-                        <CardAction>
-                            <Button className="text-xl font-semibold text-black font-sans font-bold" variant="outline"
-                                onClick = {handleExtremeBuy}
-                            >Buy Now</Button>
-                        </CardAction>
-                    </CardFooter>
-
-                </Card>
+                {/* Invest Now Button */}
+                <div className="bg-[#1a1a1a] flex justify-center pb-6">
+                    <button className="border border-white text-white px-6 py-2 rounded hover:bg-white hover:text-black transition-colors">
+                        Invest Now
+                    </button>
+                </div>
             </div>
-        </>
+        </div>
     )
 }
 
-export default CnStore;
+export default CnStore
