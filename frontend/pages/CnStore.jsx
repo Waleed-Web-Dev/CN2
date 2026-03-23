@@ -30,7 +30,7 @@ const CnStore = () => {
 
     return (
         <div className="bg-black min-h-screen p-4">
-            <div className="w-full max-w-md mx-auto border border-white rounded-xl overflow-hidden">
+            <div className="w-full max-w-md mx-auto border border-white rounded-xl overflow-y-auto">
                 {serviceList.map((service, index) => (
                     <div key={index} className="border-b border-white p-4">
                         <div className="flex justify-between items-center">
